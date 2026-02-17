@@ -88,10 +88,15 @@ h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--accen
   background: var(--surface);
   border: 2px solid var(--border);
   border-radius: 12px;
-  padding: 32px 28px;
+  padding: 0;
   box-shadow: var(--shadow);
   max-width: 600px;
+  overflow: hidden;
 }
+.welcome-header-img {
+  width: 100%; height: 180px; object-fit: cover; display: block;
+}
+.welcome-card-body { padding: 28px 28px 32px; }
 .welcome-card h1 { font-size: 1.6rem; margin-bottom: 16px; }
 .welcome-card .subtitle { margin-bottom: 16px; }
 .welcome-features {
@@ -348,6 +353,57 @@ h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--accen
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Staggered card entrance */
+.screen.visible .q-card,
+.screen.visible .section-intro,
+.screen.visible .stimulus-wrap,
+.screen.visible h2 {
+  animation: fadeInUp 0.45s ease both;
+}
+.screen.visible .q-card:nth-child(1),
+.screen.visible .section-intro { animation-delay: 0.05s; }
+.screen.visible .q-card:nth-child(2),
+.screen.visible h2 { animation-delay: 0.15s; }
+.screen.visible .q-card:nth-child(3),
+.screen.visible .stimulus-wrap { animation-delay: 0.25s; }
+.screen.visible .q-card:nth-child(4) { animation-delay: 0.35s; }
+
+/* Progress encouragement */
+.progress-note {
+  font-size: 0.82rem; color: var(--accent); font-weight: 600;
+  text-align: center; margin-bottom: 16px; opacity: 0;
+  animation: fadeInUp 0.5s ease 0.1s both;
+}
+
+/* Confetti canvas */
+#confetti-canvas {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 999;
+}
+
+/* Thank you enhancements */
+.thankyou-card .check-circle {
+  width: 64px; height: 64px; margin: 0 auto 16px;
+  background: var(--success); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.3s both;
+}
+.thankyou-card .check-circle svg {
+  width: 32px; height: 32px; stroke: #fff; stroke-width: 3;
+  fill: none; stroke-linecap: round; stroke-linejoin: round;
+}
+.check-circle svg .check-path {
+  stroke-dasharray: 40; stroke-dashoffset: 40;
+  animation: drawCheck 0.4s ease 0.7s forwards;
+}
+@keyframes popIn {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes drawCheck {
+  to { stroke-dashoffset: 0; }
+}
+
 /* Responsive */
 @media (max-width: 640px) {
   .wrap { padding: 14px 10px 60px; }
@@ -376,17 +432,20 @@ h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--accen
   <!-- ========== SCREEN 0: WELCOME ========== -->
   <div class="screen active" id="screen-0">
     <div class="welcome-card">
-      <h1>People Priorities &amp; Inclusion in 2026</h1>
-      <p class="subtitle">We're mapping what HR and people leaders across the UK are thinking, prioritising, and planning for in 2026 &mdash; and how the inclusion landscape is evolving.</p>
-      <ul class="welcome-features">
-        <li>Takes around <strong>5 minutes</strong> to complete</li>
-        <li>Your responses are <strong>completely anonymous</strong></li>
-        <li>Findings will be published as a free sector-wide report</li>
-        <li>Opt in at the end to receive a summary of the findings</li>
-      </ul>
-      <p class="subtitle" style="font-size:0.85rem; color: var(--muted); margin-bottom: 0;">Thank you for your time.</p>
-      <div style="margin-top: 20px;">
-        <button class="btn btn-primary" onclick="goToScreen(1)">Let's get started &rarr;</button>
+      <img src="images/survey-header.jpg" alt="Colourful diversity illustration" class="welcome-header-img">
+      <div class="welcome-card-body">
+        <h1>People Priorities &amp; Inclusion in 2026</h1>
+        <p class="subtitle">We're mapping what HR and people leaders across the UK are thinking, prioritising, and planning for in 2026 &mdash; and how the inclusion landscape is evolving.</p>
+        <ul class="welcome-features">
+          <li>Takes around <strong>5 minutes</strong> to complete</li>
+          <li>Your responses are <strong>completely anonymous</strong></li>
+          <li>Findings will be published as a free sector-wide report</li>
+          <li>Opt in at the end to receive a summary of the findings</li>
+        </ul>
+        <p class="subtitle" style="font-size:0.85rem; color: var(--muted); margin-bottom: 0;">Thank you for your time.</p>
+        <div style="margin-top: 20px;">
+          <button class="btn btn-primary" onclick="goToScreen(1)">Let's get started &rarr;</button>
+        </div>
       </div>
     </div>
   </div>
@@ -547,6 +606,7 @@ h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--accen
 
   <!-- ========== SCREEN 8: INCLUSION TREND (Q11 + Q12) ========== -->
   <div class="screen" id="screen-8">
+    <div class="progress-note">You're halfway through &mdash; thank you for sticking with it!</div>
     <div class="step-pill">Section 4 of 9 &mdash; People Priorities</div>
 
     <!-- Q11 -->
@@ -668,8 +728,9 @@ h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--accen
 
   <!-- ========== SCREEN 13: MEMBERSHIP (Q20 + Q21) ========== -->
   <div class="screen" id="screen-13">
+    <div class="progress-note">Nearly done &mdash; just a few more questions!</div>
     <div class="step-pill">Section 7 of 9 &mdash; External Support</div>
-    <p class="section-intro">Nearly there! A couple of questions about how your organisation prefers to access external support.</p>
+    <p class="section-intro">A couple of questions about how your organisation prefers to access external support.</p>
 
     <!-- Q20 -->
     <div class="q-card" id="qcard-q20">
@@ -786,7 +847,11 @@ h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--accen
 
   <!-- ========== SCREEN 17: THANK YOU ========== -->
   <div class="screen" id="screen-17">
+    <canvas id="confetti-canvas"></canvas>
     <div class="thankyou-card">
+      <div class="check-circle">
+        <svg viewBox="0 0 24 24"><path class="check-path" d="M5 13l4 4L19 7"/></svg>
+      </div>
       <h1>Thank you for taking part</h1>
       <p class="subtitle" style="text-align: center; margin-bottom: 16px;">
         Your responses will help shape a clearer picture of the people and inclusion priorities across UK organisations in 2026.
@@ -1521,6 +1586,9 @@ function goToScreen(idx) {
     document.getElementById('progressBar').style.width = progress + '%';
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Confetti on thank you screen
+    if (idx === 17) setTimeout(launchConfetti, 400);
   }, 180);
 }
 
@@ -1643,6 +1711,73 @@ function closeLightbox() {
   document.body.style.overflow = '';
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+// ===== CONFETTI =====
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const colours = ['#2B3A67', '#E8B931', '#28a745', '#dc3545', '#6b6b80', '#ff8c42', '#4ecdc4', '#c56cf0'];
+  const pieces = [];
+  const total = 120;
+
+  for (let i = 0; i < total; i++) {
+    pieces.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height * -1.2,
+      w: Math.random() * 8 + 4,
+      h: Math.random() * 4 + 2,
+      colour: colours[Math.floor(Math.random() * colours.length)],
+      vx: (Math.random() - 0.5) * 3,
+      vy: Math.random() * 3 + 2,
+      rot: Math.random() * 360,
+      rotV: (Math.random() - 0.5) * 8,
+      opacity: 1
+    });
+  }
+
+  let frame = 0;
+  const maxFrames = 200;
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    frame++;
+
+    // Start fading out near the end
+    const fadeStart = maxFrames * 0.65;
+
+    pieces.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.04; // gravity
+      p.rot += p.rotV;
+      p.vx *= 0.99;
+
+      if (frame > fadeStart) {
+        p.opacity = Math.max(0, 1 - (frame - fadeStart) / (maxFrames - fadeStart));
+      }
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI / 180);
+      ctx.globalAlpha = p.opacity;
+      ctx.fillStyle = p.colour;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+
+    if (frame < maxFrames) {
+      requestAnimationFrame(draw);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+
+  draw();
+}
 
 // ===== INIT =====
 function init() {
