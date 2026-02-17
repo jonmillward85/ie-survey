@@ -1152,6 +1152,11 @@ function escHtml(s) {
   return d.innerHTML;
 }
 
+// Escape for use inside single-quoted JS strings in inline handlers
+function escJs(s) {
+  return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
 // ===== BUILD OPTIONS =====
 function buildRadioOptions(qId, containerId) {
   const q = Q_DATA[qId];
@@ -1210,9 +1215,9 @@ function buildMatrix(mId, desktopId, mobileId) {
   let thead = '<tr><th>Statement</th>' + m.scale.map(s => `<th>${escHtml(s)}</th>`).join('') + '</tr>';
   let tbody = items.map(item => {
     let cells = m.scale.map((s, si) =>
-      `<td><input type="radio" class="matrix-radio" name="mx-${mId}-${item.key}" value="${escHtml(s)}" onclick="setMatrix('${mId}','${item.key}','${escHtml(s)}',this)"></td>`
+      `<td><input type="radio" class="matrix-radio" name="mx-${mId}-${item.key}" value="${escHtml(s)}" onclick="setMatrix('${mId}','${item.key}','${escJs(s)}',this)"></td>`
     ).join('');
-    return `<tr id="mrow-${mId}-${item.key}""><td>${escHtml(item.label)}</td>${cells}</tr>`;
+    return `<tr id="mrow-${mId}-${item.key}"><td>${escHtml(item.label)}</td>${cells}</tr>`;
   }).join('');
 
   const dEl = document.getElementById(desktopId);
@@ -1221,7 +1226,7 @@ function buildMatrix(mId, desktopId, mobileId) {
   // Mobile cards
   let mobile = items.map(item => {
     let btns = m.scale.map(s =>
-      `<button class="mm-btn" onclick="setMatrix('${mId}','${item.key}','${escHtml(s)}',this)">${escHtml(s)}</button>`
+      `<button class="mm-btn" onclick="setMatrix('${mId}','${item.key}','${escJs(s)}',this)">${escHtml(s)}</button>`
     ).join('');
     return `<div class="matrix-mobile-item" id="mm-${mId}-${item.key}"><div class="mm-label">${escHtml(item.label)}</div><div class="mm-options">${btns}</div></div>`;
   }).join('');
