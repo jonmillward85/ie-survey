@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>People Priorities & Inclusion in 2026</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f4f5f7;
+  --surface: #ffffff;
+  --text: #1a1a2e;
+  --muted: #6b6b80;
+  --accent: #2B3A67;
+  --accent-hover: #1f2d52;
+  --accent-light: #e8edf6;
+  --accent-bg: #d0d8eb;
+  --highlight: #E8B931;
+  --highlight-light: #fef9e7;
+  --border: #d0d3da;
+  --error: #dc3545;
+  --success: #28a745;
+  --radius: 8px;
+  --shadow: 0 1px 8px rgba(0,0,0,0.07);
+  --shadow-lg: 0 6px 24px rgba(0,0,0,0.12);
+  --ease: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.wrap { max-width: 720px; margin: 0 auto; padding: 20px 16px 80px; }
+
+/* Progress */
+.progress-track {
+  position: sticky; top: 0; z-index: 100;
+  width: 100%; height: 6px; background: #d0d3da;
+  border-radius: 3px; margin-bottom: 24px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--highlight));
+  border-radius: 3px; transition: width 0.6s ease;
+}
+
+/* Screens */
+.screen { display: none; opacity: 0; transition: opacity var(--ease); }
+.screen.active { display: block; }
+.screen.visible { opacity: 1; }
+
+/* Typography */
+h1 { font-size: 1.55rem; font-weight: 700; margin-bottom: 8px; color: var(--accent); }
+h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--accent); }
+.subtitle { font-size: 0.95rem; color: var(--text); margin-bottom: 20px; max-width: 640px; line-height: 1.65; }
+
+.step-pill {
+  display: inline-block;
+  font-size: 0.75rem; color: var(--accent); text-transform: uppercase;
+  letter-spacing: 0.08em; font-weight: 700; margin-bottom: 12px;
+  background: var(--accent-light); padding: 5px 14px; border-radius: 4px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 14px 36px; font-size: 1.05rem; font-weight: 700; font-family: var(--font);
+  border: none; border-radius: var(--radius); cursor: pointer; transition: all 0.2s ease;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent-hover); box-shadow: 0 4px 14px rgba(43,58,103,0.3); }
+.btn-primary:disabled { background: #a0a8b8; cursor: not-allowed; box-shadow: none; }
+
+.btn-secondary {
+  background: transparent; color: var(--accent); border: 2px solid var(--accent);
+  padding: 12px 28px; font-size: 0.95rem;
+}
+.btn-secondary:hover { background: var(--accent-light); }
+
+/* Welcome card */
+.welcome-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 32px 28px;
+  box-shadow: var(--shadow);
+  max-width: 600px;
+}
+.welcome-card h1 { font-size: 1.6rem; margin-bottom: 16px; }
+.welcome-card .subtitle { margin-bottom: 16px; }
+.welcome-features {
+  list-style: none; padding: 0; margin: 12px 0 20px;
+}
+.welcome-features li {
+  position: relative; padding-left: 28px; margin-bottom: 8px;
+  font-size: 0.92rem; line-height: 1.55;
+}
+.welcome-features li::before {
+  content: '✓'; position: absolute; left: 4px;
+  color: var(--accent); font-weight: 700; font-size: 0.9rem;
+}
+
+/* ==================== QUESTION BLOCKS ==================== */
+.q-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 24px 22px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+  transition: border-color 0.3s;
+}
+.q-card.answered { border-color: var(--accent); }
+.q-card.error-shake { animation: shake 0.4s ease; border-color: var(--error); }
+
+.q-label {
+  font-size: 1rem; font-weight: 700; color: var(--text);
+  margin-bottom: 4px; line-height: 1.5;
+}
+.q-hint {
+  font-size: 0.85rem; color: var(--muted); margin-bottom: 14px; line-height: 1.5;
+}
+.q-description {
+  font-size: 0.88rem; color: var(--muted); font-style: italic;
+  margin-bottom: 14px; line-height: 1.5;
+  padding: 10px 14px;
+  background: #f8f9fb;
+  border-left: 3px solid var(--accent-light);
+  border-radius: 0 6px 6px 0;
+}
+
+/* Radio options */
+.option-list { list-style: none; padding: 0; }
+.option-list li { margin-bottom: 8px; }
+.option-btn {
+  display: flex; align-items: center; width: 100%;
+  padding: 12px 16px; font-size: 0.92rem; font-family: var(--font);
+  background: var(--surface); border: 2px solid var(--border);
+  border-radius: var(--radius); cursor: pointer;
+  transition: all 0.15s ease; text-align: left; line-height: 1.45;
+  color: var(--text); font-weight: 500;
+}
+.option-btn:hover { border-color: var(--accent); background: var(--accent-light); }
+.option-btn.selected {
+  border-color: var(--accent); background: var(--accent-light);
+  font-weight: 700; color: var(--accent);
+}
+.option-btn .radio-dot {
+  width: 20px; height: 20px; min-width: 20px;
+  border: 2px solid var(--border); border-radius: 50%;
+  margin-right: 12px; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s ease;
+}
+.option-btn.selected .radio-dot {
+  border-color: var(--accent);
+}
+.option-btn.selected .radio-dot::after {
+  content: ''; width: 10px; height: 10px;
+  background: var(--accent); border-radius: 50%;
+}
+
+/* Checkbox options (multi-select) */
+.check-btn {
+  display: flex; align-items: flex-start; width: 100%;
+  padding: 12px 16px; font-size: 0.92rem; font-family: var(--font);
+  background: var(--surface); border: 2px solid var(--border);
+  border-radius: var(--radius); cursor: pointer;
+  transition: all 0.15s ease; text-align: left; line-height: 1.45;
+  color: var(--text); font-weight: 500;
+}
+.check-btn:hover { border-color: var(--accent); background: var(--accent-light); }
+.check-btn.selected {
+  border-color: var(--accent); background: var(--accent-light);
+  font-weight: 600; color: var(--accent);
+}
+.check-box {
+  width: 20px; height: 20px; min-width: 20px;
+  border: 2px solid var(--border); border-radius: 4px;
+  margin-right: 12px; margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s ease;
+}
+.check-btn.selected .check-box {
+  border-color: var(--accent); background: var(--accent);
+}
+.check-btn.selected .check-box::after {
+  content: '✓'; color: #fff; font-size: 0.75rem; font-weight: 800;
+}
+
+/* Other text input */
+.other-input {
+  width: 100%; padding: 10px 14px; margin-top: 8px;
+  font-size: 0.9rem; font-family: var(--font);
+  border: 2px solid var(--border); border-radius: var(--radius);
+  outline: none; transition: border-color 0.2s; display: none;
+}
+.other-input.show { display: block; }
+.other-input:focus { border-color: var(--accent); }
+
+/* Matrix */
+.matrix-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.matrix-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.matrix-table th {
+  padding: 10px 8px; font-weight: 700; text-align: center;
+  color: var(--accent); font-size: 0.8rem; border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+.matrix-table th:first-child { text-align: left; min-width: 200px; }
+.matrix-table td { padding: 10px 8px; text-align: center; border-bottom: 1px solid #eee; }
+.matrix-table td:first-child {
+  text-align: left; font-weight: 600; font-size: 0.88rem; line-height: 1.4;
+}
+.matrix-table tr:hover { background: #fafbfc; }
+.matrix-table tr.answered-row td:first-child { color: var(--accent); }
+
+.matrix-radio {
+  width: 22px; height: 22px; cursor: pointer; accent-color: var(--accent);
+}
+
+/* Mobile matrix → stacked cards */
+.matrix-mobile { display: none; }
+.matrix-mobile-item {
+  background: #f8f9fb; border-radius: 8px;
+  padding: 14px 16px; margin-bottom: 12px;
+}
+.matrix-mobile-item .mm-label {
+  font-weight: 700; font-size: 0.92rem; margin-bottom: 10px;
+  color: var(--text); line-height: 1.4;
+}
+.matrix-mobile-item .mm-options { display: flex; gap: 6px; flex-wrap: wrap; }
+.mm-btn {
+  flex: 1; min-width: 0;
+  padding: 8px 6px; font-size: 0.76rem; font-weight: 600;
+  font-family: var(--font); border: 2px solid var(--border);
+  border-radius: 6px; background: var(--surface); color: var(--text);
+  cursor: pointer; transition: all 0.15s ease; text-align: center; line-height: 1.3;
+}
+.mm-btn:hover { border-color: #999; background: #f0f0f0; }
+.mm-btn.selected { border-color: var(--accent); background: var(--accent); color: #fff; }
+
+/* Textarea */
+.q-textarea {
+  width: 100%; min-height: 80px; padding: 12px 14px;
+  font-size: 0.92rem; font-family: var(--font);
+  border: 2px solid var(--border); border-radius: var(--radius);
+  resize: vertical; outline: none; transition: border-color 0.2s;
+}
+.q-textarea:focus { border-color: var(--accent); }
+.q-textarea::placeholder { color: #b0b3be; }
+
+/* Email input */
+.q-email {
+  width: 100%; padding: 12px 14px;
+  font-size: 0.95rem; font-family: var(--font);
+  border: 2px solid var(--border); border-radius: var(--radius);
+  outline: none; transition: border-color 0.2s;
+}
+.q-email:focus { border-color: var(--accent); }
+
+/* Navigation */
+.nav-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 24px; gap: 12px;
+}
+.nav-row .validation-msg {
+  font-size: 0.85rem; color: var(--error); font-weight: 600;
+  display: none; text-align: center; flex: 1;
+}
+.nav-row .validation-msg.show { display: block; }
+
+/* Section transitions */
+.section-intro {
+  font-size: 0.88rem; color: var(--muted); font-style: italic;
+  margin-bottom: 20px; padding: 12px 16px;
+  background: var(--highlight-light);
+  border-left: 3px solid var(--highlight);
+  border-radius: 0 6px 6px 0; line-height: 1.55;
+}
+
+/* Conditional reveal */
+.conditional-block {
+  max-height: 0; opacity: 0; overflow: hidden;
+  transition: max-height 0.5s ease, opacity 0.4s ease, margin 0.4s ease;
+  margin-top: 0;
+}
+.conditional-block.revealed {
+  max-height: 800px; opacity: 1; margin-top: 20px;
+}
+
+/* Stimulus image */
+.stimulus-wrap {
+  margin-bottom: 20px; border: 2px solid var(--border);
+  border-radius: 10px; overflow: hidden; cursor: pointer;
+  position: relative;
+}
+.stimulus-wrap img { display: block; width: 100%; height: auto; }
+.stimulus-wrap .zoom-hint {
+  position: absolute; bottom: 10px; right: 10px;
+  background: rgba(0,0,0,0.65); color: #fff;
+  font-size: 0.78rem; font-weight: 600;
+  padding: 5px 12px; border-radius: 5px;
+}
+
+/* Thank you */
+.thankyou-card {
+  max-width: 560px; margin: 0 auto;
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  padding: 36px 28px;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+.thankyou-card h1 { text-align: center; margin-bottom: 16px; }
+
+/* Lightbox */
+.lightbox {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.92); z-index: 1000;
+  cursor: zoom-out; align-items: center; justify-content: center; padding: 12px;
+}
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 97vw; max-height: 94vh; object-fit: contain; border-radius: 4px; }
+.lightbox-x {
+  position: fixed; top: 12px; right: 14px; z-index: 1001;
+  background: rgba(255,255,255,0.2); border: none; color: #fff;
+  font-size: 1.8rem; width: 44px; height: 44px; border-radius: 50%;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+
+/* Animations */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .wrap { padding: 14px 10px 60px; }
+  h1 { font-size: 1.3rem; }
+  .q-card { padding: 18px 16px; }
+  .option-btn { padding: 10px 14px; font-size: 0.88rem; }
+  .matrix-desktop { display: none; }
+  .matrix-mobile { display: block; }
+  .nav-row { flex-wrap: wrap; }
+}
+@media (min-width: 641px) {
+  .matrix-mobile { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="progress-track">
+    <div class="progress-fill" id="progressBar"></div>
+  </div>
+
+  <!-- ========== SCREEN 0: WELCOME ========== -->
+  <div class="screen active" id="screen-0">
+    <div class="welcome-card">
+      <h1>People Priorities &amp; Inclusion in 2026</h1>
+      <p class="subtitle">We're mapping what HR and people leaders across the UK are thinking, prioritising, and planning for in 2026 &mdash; and how the inclusion landscape is evolving.</p>
+      <ul class="welcome-features">
+        <li>Takes around <strong>5 minutes</strong> to complete</li>
+        <li>Your responses are <strong>completely anonymous</strong></li>
+        <li>Findings will be published as a free sector-wide report</li>
+        <li>Opt in at the end to receive a summary of the findings</li>
+      </ul>
+      <p class="subtitle" style="font-size:0.85rem; color: var(--muted); margin-bottom: 0;">Thank you for your time.</p>
+      <div style="margin-top: 20px;">
+        <button class="btn btn-primary" onclick="goToScreen(1)">Let's get started &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 1: ABOUT YOU (Q1 + Q2) ========== -->
+  <div class="screen" id="screen-1">
+    <div class="step-pill">Section 1 of 9 &mdash; About You</div>
+    <p class="section-intro">These first few questions help us understand who's responding. All answers are anonymous.</p>
+
+    <!-- Q1 -->
+    <div class="q-card" id="qcard-q1">
+      <div class="q-label">Which of the following best describes your role?</div>
+      <div class="q-hint">Select one</div>
+      <ul class="option-list" id="opts-q1"></ul>
+    </div>
+
+    <!-- Q2 -->
+    <div class="q-card" id="qcard-q2">
+      <div class="q-label">What is your level of seniority?</div>
+      <div class="q-hint">Select one</div>
+      <ul class="option-list" id="opts-q2"></ul>
+    </div>
+
+    <div class="nav-row">
+      <span></span>
+      <span class="validation-msg" id="val-1">Please answer both questions to continue.</span>
+      <button class="btn btn-primary" onclick="tryAdvance(1)">Continue &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 2: ABOUT YOUR ORG (Q3 + Q4 + Q5) ========== -->
+  <div class="screen" id="screen-2">
+    <div class="step-pill">Section 1 of 9 &mdash; About You</div>
+
+    <!-- Q3 -->
+    <div class="q-card" id="qcard-q3">
+      <div class="q-label">How involved are you in decisions about spending on inclusion, people development, or related external services?</div>
+      <div class="q-hint">Select one</div>
+      <ul class="option-list" id="opts-q3"></ul>
+    </div>
+
+    <!-- Q4 -->
+    <div class="q-card" id="qcard-q4">
+      <div class="q-label">How many people does your organisation employ?</div>
+      <div class="q-hint">Select one</div>
+      <ul class="option-list" id="opts-q4"></ul>
+    </div>
+
+    <!-- Q5 -->
+    <div class="q-card" id="qcard-q5">
+      <div class="q-label">Which best describes your organisation's sector?</div>
+      <div class="q-hint">Select one</div>
+      <ul class="option-list" id="opts-q5"></ul>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goToScreen(1)">&larr; Back</button>
+      <span class="validation-msg" id="val-2">Please answer all questions to continue.</span>
+      <button class="btn btn-primary" onclick="tryAdvance(2)">Continue &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 3: SUB-SECTOR (Q5a) ========== -->
+  <div class="screen" id="screen-3">
+    <div class="step-pill">Section 1 of 9 &mdash; About You</div>
+
+    <div class="q-card" id="qcard-q5a">
+      <div class="q-label">Which of the following best describes your organisation's area of work?</div>
+      <div class="q-hint">Select one</div>
+      <ul class="option-list" id="opts-q5a"></ul>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goToScreen(2)">&larr; Back</button>
+      <span class="validation-msg" id="val-3">Please select an option to continue.</span>
+      <button class="btn btn-primary" onclick="tryAdvance(3)">Continue &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 4: IE RELATIONSHIP (Q6) ========== -->
+  <div class="screen" id="screen-4">
+    <div class="step-pill">Section 2 of 9 &mdash; Your Relationship with Inclusive Employers</div>
+
+    <div class="q-card" id="qcard-q6">
+      <div class="q-label">Which of the following best describes your organisation's relationship with Inclusive Employers?</div>
+      <div class="q-description">Inclusive Employers is a UK-based membership organisation focused on workplace inclusion.</div>
+      <div class="q-hint">Select one</div>
+      <ul class="option-list" id="opts-q6"></ul>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goToScreen(3)">&larr; Back</button>
+      <span class="validation-msg" id="val-4">Please select an option to continue.</span>
+      <button class="btn btn-primary" onclick="tryAdvance(4)">Continue &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 5: NAME PERCEPTION (Q7) ========== -->
+  <div class="screen" id="screen-5">
+    <div class="step-pill">Section 3 of 9 &mdash; The Name "Inclusive Employers"</div>
+    <p class="section-intro">We'd like to understand what the name "Inclusive Employers" suggests to people &mdash; regardless of whether you know the organisation.</p>
+
+    <div class="q-card" id="qcard-q7">
+      <div class="q-label">Based solely on the name "Inclusive Employers", which of the following would you expect them to offer?</div>
+      <div class="q-hint">Select all that apply</div>
+      <ul class="option-list" id="opts-q7"></ul>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goToScreen(4)">&larr; Back</button>
+      <span class="validation-msg" id="val-5">Please select at least one option.</span>
+      <button class="btn btn-primary" onclick="tryAdvance(5)">Continue &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 6: NAME CREDIBILITY (Q8 + Q9) ========== -->
+  <div class="screen" id="screen-6">
+    <div class="step-pill">Section 3 of 9 &mdash; The Name "Inclusive Employers"</div>
+
+    <!-- Q8 -->
+    <div class="q-card" id="qcard-q8">
+      <div class="q-label">To what extent do you agree with the following statement?</div>
+      <div class="q-description">"A company called 'Inclusive Employers' could credibly help organisations with broader people strategy and cultural transformation &mdash; not just inclusion training and awareness."</div>
+      <ul class="option-list" id="opts-q8"></ul>
+    </div>
+
+    <!-- Q9 -->
+    <div class="q-card" id="qcard-q9">
+      <div class="q-label">To what extent do you agree with the following statement?</div>
+      <div class="q-description">"The name 'Inclusive Employers' might put some organisations off, or limit expectations of what the company could help with."</div>
+      <ul class="option-list" id="opts-q9"></ul>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goToScreen(5)">&larr; Back</button>
+      <span class="validation-msg" id="val-6">Please answer both questions to continue.</span>
+      <button class="btn btn-primary" onclick="tryAdvance(6)">Continue &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 7: PEOPLE PRIORITIES (Q10) ========== -->
+  <div class="screen" id="screen-7">
+    <div class="step-pill">Section 4 of 9 &mdash; People Priorities</div>
+    <p class="section-intro">Now we'd like to understand the bigger picture &mdash; what matters most to organisations like yours right now.</p>
+
+    <div class="q-card" id="qcard-q10">
+      <div class="q-label">What are your organisation's top people priorities for 2026?</div>
+      <div class="q-hint">Select up to 3 &mdash; <span id="q10-count">0</span> of 3 selected</div>
+      <ul class="option-list" id="opts-q10"></ul>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goToScreen(6)">&larr; Back</button>
+      <span class="validation-msg" id="val-7">Please select at least one priority.</span>
+      <button class="btn btn-primary" onclick="tryAdvance(7)">Continue &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 8: INCLUSION TREND (Q11 + Q12) ========== -->
+  <div class="screen" id="screen-8">
+    <div class="step-pill">Section 4 of 9 &mdash; People Priorities</div>
+
+    <!-- Q11 -->
+    <div class="q-card" id="qcard-q11">
+      <div class="q-label">Compared to 12 months ago, is inclusion and EDI becoming more or less important in your organisation?</div>
+      <ul class="option-list" id="opts-q11"></ul>
+    </div>
+
+    <!-- Q12 (conditional) -->
+    <div class="conditional-block" id="q12-block">
+      <div class="q-card" id="qcard-q12">
+        <div class="q-label">In a few words, what's driving that change?</div>
+        <div class="q-hint">A sentence or two is fine</div>
+        <textarea class="q-textarea" id="q12-text" placeholder="There are no wrong answers — just say what comes to mind..."></textarea>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goToScreen(7)">&larr; Back</button>
+      <span class="validation-msg" id="val-8">Please answer the question to continue.</span>
+      <button class="btn btn-primary" onclick="tryAdvance(8)">Continue &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 9: BUDGET (Q13 + Q14) ========== -->
+  <div class="screen" id="screen-9">
+    <div class="step-pill">Section 5 of 9 &mdash; Budget &amp; Resources</div>
+    <p class="section-intro">A few questions about how resources and budgets are shaping up.</p>
+
+    <!-- Q13 -->
+    <div class="q-card" id="qcard-q13">
+      <div class="q-label">Over the past 12 months, has your organisation's discretionary budget for external inclusion and people development support...</div>
+      <ul class="option-list" id="opts-q13"></ul>
+    </div>
+
+    <!-- Q14 -->
+    <div class="q-card" id="qcard-q14">
+      <div class="q-label">Over the same period, has your organisation's internal headcount dedicated to inclusion and people development...</div>
+      <ul class="option-list" id="opts-q14"></ul>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goToScreen(8)">&larr; Back</button>
+      <span class="validation-msg" id="val-9">Please answer both questions to continue.</span>
+      <button class="btn btn-primary" onclick="tryAdvance(9)">Continue &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 10: BUDGET REASONS + ROI (Q15 + Q16 + Q17) ========== -->
+  <div class="screen" id="screen-10">
+    <div class="step-pill">Section 5 of 9 &mdash; Budget &amp; Resources</div>
+
+    <!-- Q15 (conditional on Q13) -->
+    <div id="q15-block" style="display:none;">
+      <div class="q-card" id="qcard-q15">
+        <div class="q-label" id="q15-label">What is the main reason for the budget change?</div>
+        <div class="q-hint">Select one</div>
+        <ul class="option-list" id="opts-q15"></ul>
+      </div>
+    </div>
+
+    <!-- Q16 -->
+    <div class="q-card" id="qcard-q16">
+      <div class="q-label">How much pressure does your organisation face to demonstrate the return on investment (ROI) of inclusion work?</div>
+      <ul class="option-list" id="opts-q16"></ul>
+    </div>
+
+    <!-- Q17 -->
+    <div class="q-card" id="qcard-q17">
+      <div class="q-label">How difficult is it to secure internal approval for spending on inclusion and people development?</div>
+      <ul class="option-list" id="opts-q17"></ul>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goToScreen(9)">&larr; Back</button>
+      <span class="validation-msg" id="val-10">Please answer all questions to continue.</span>
+      <button class="btn btn-primary" onclick="tryAdvance(10)">Continue &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 11: LANGUAGE (Q18) ========== -->
+  <div class="screen" id="screen-11">
+    <div class="step-pill">Section 6 of 9 &mdash; Language &amp; Framing</div>
+    <p class="section-intro">The language around inclusion is evolving. These questions help us understand what's happening on the ground.</p>
+
+    <div class="q-card" id="qcard-q18">
+      <div class="q-label">Which of the following terms does your organisation currently use when talking about this area of work?</div>
+      <div class="q-hint">Select all that apply</div>
+      <ul class="option-list" id="opts-q18"></ul>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goToScreen(10)">&larr; Back</button>
+      <span class="validation-msg" id="val-11">Please select at least one option.</span>
+      <button class="btn btn-primary" onclick="tryAdvance(11)">Continue &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 12: LANGUAGE MATRIX (Q19) ========== -->
+  <div class="screen" id="screen-12">
+    <div class="step-pill">Section 6 of 9 &mdash; Language &amp; Framing</div>
+
+    <div class="q-card" id="qcard-q19">
+      <div class="q-label">To what extent do you agree with the following statements?</div>
+      <div class="q-hint">One answer per row</div>
+
+      <!-- Desktop matrix -->
+      <div class="matrix-desktop matrix-wrap" id="matrix-q19-desktop"></div>
+      <!-- Mobile stacked -->
+      <div class="matrix-mobile" id="matrix-q19-mobile"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goToScreen(11)">&larr; Back</button>
+      <span class="validation-msg" id="val-12">Please rate all statements to continue.</span>
+      <button class="btn btn-primary" onclick="tryAdvance(12)">Continue &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 13: MEMBERSHIP (Q20 + Q21) ========== -->
+  <div class="screen" id="screen-13">
+    <div class="step-pill">Section 7 of 9 &mdash; External Support</div>
+    <p class="section-intro">Nearly there! A couple of questions about how your organisation prefers to access external support.</p>
+
+    <!-- Q20 -->
+    <div class="q-card" id="qcard-q20">
+      <div class="q-label">When it comes to external support for inclusion and people strategy, which would your organisation prefer?</div>
+      <ul class="option-list" id="opts-q20"></ul>
+    </div>
+
+    <!-- Q21 -->
+    <div class="q-card" id="qcard-q21">
+      <div class="q-label">If you were choosing a membership or ongoing relationship with an inclusion and people strategy partner, which of the following would matter most?</div>
+      <div class="q-hint">Select up to 3 &mdash; <span id="q21-count">0</span> of 3 selected</div>
+      <ul class="option-list" id="opts-q21"></ul>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goToScreen(12)">&larr; Back</button>
+      <span class="validation-msg" id="val-13">Please answer both questions to continue.</span>
+      <button class="btn btn-primary" onclick="tryAdvance(13)">Continue &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 14: IE BRAND PERCEPTION (Q22 + Q24) — ROUTED ========== -->
+  <div class="screen" id="screen-14">
+    <div class="step-pill">Section 8 of 9 &mdash; Inclusive Employers</div>
+    <p class="section-intro">You mentioned that you're aware of Inclusive Employers. We'd love your thoughts on a few things.</p>
+
+    <!-- Q22 -->
+    <div class="q-card" id="qcard-q22">
+      <div class="q-label">Based on your experience or knowledge of Inclusive Employers, how would you rate them on the following?</div>
+      <div class="q-hint">One answer per row</div>
+      <div class="matrix-desktop matrix-wrap" id="matrix-q22-desktop"></div>
+      <div class="matrix-mobile" id="matrix-q22-mobile"></div>
+    </div>
+
+    <!-- Q24 -->
+    <div class="q-card" id="qcard-q24">
+      <div class="q-label">Have you ever confused or mixed up Inclusive Employers with another organisation working in this space?</div>
+      <ul class="option-list" id="opts-q24"></ul>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goToScreen(13)">&larr; Back</button>
+      <span class="validation-msg" id="val-14">Please complete all questions to continue.</span>
+      <button class="btn btn-primary" onclick="tryAdvance(14)">Continue &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 15: IE WEBSITE STIMULUS (Q23 + Q23a) — ROUTED ========== -->
+  <div class="screen" id="screen-15">
+    <div class="step-pill">Section 8 of 9 &mdash; Inclusive Employers</div>
+
+    <h2>Take a look at the Inclusive Employers website</h2>
+    <p class="subtitle">Based on what you see below, please rate the following statements.</p>
+
+    <div class="stimulus-wrap" onclick="openLightbox('images/ie-website.png')">
+      <img src="images/ie-website.png" alt="Inclusive Employers website screenshot" id="stimulus-img">
+      <span class="zoom-hint">Tap to enlarge</span>
+    </div>
+
+    <!-- Q23 -->
+    <div class="q-card" id="qcard-q23">
+      <div class="q-label">Based on what you see, how would you rate the following?</div>
+      <div class="q-hint">One answer per row</div>
+      <div class="matrix-desktop matrix-wrap" id="matrix-q23-desktop"></div>
+      <div class="matrix-mobile" id="matrix-q23-mobile"></div>
+    </div>
+
+    <!-- Q23a -->
+    <div class="q-card" id="qcard-q23a">
+      <div class="q-label">Any other thoughts on how Inclusive Employers presents itself visually?</div>
+      <div class="q-hint">Optional &mdash; feel free to skip if you have nothing to add</div>
+      <textarea class="q-textarea" id="q23a-text" placeholder="Any thoughts..."></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" onclick="goToScreen(14)">&larr; Back</button>
+      <span class="validation-msg" id="val-15">Please rate all statements to continue.</span>
+      <button class="btn btn-primary" onclick="tryAdvance(15)">Continue &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 16: OPT-INS (Q25 + Q25a + Q26) ========== -->
+  <div class="screen" id="screen-16">
+    <div class="step-pill">Section 9 of 9 &mdash; Finally</div>
+    <p class="section-intro">Last couple of questions &mdash; you're done after this!</p>
+
+    <!-- Q25 -->
+    <div class="q-card" id="qcard-q25">
+      <div class="q-label">Would you like to receive a free summary of the findings from this research?</div>
+      <ul class="option-list" id="opts-q25"></ul>
+    </div>
+
+    <!-- Q25a (conditional) -->
+    <div class="conditional-block" id="q25a-block">
+      <div class="q-card" id="qcard-q25a">
+        <div class="q-label">Please enter your email address</div>
+        <div class="q-hint">Your email will only be used to send you the report and will not be linked to your survey responses.</div>
+        <input type="email" class="q-email" id="q25a-email" placeholder="your.email@example.com">
+      </div>
+    </div>
+
+    <!-- Q26 -->
+    <div class="q-card" id="qcard-q26">
+      <div class="q-label">We may host a short discussion session to explore these themes further. Would you be interested in taking part?</div>
+      <ul class="option-list" id="opts-q26"></ul>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" id="back-to-pre-optin">&larr; Back</button>
+      <span class="validation-msg" id="val-16">Please answer the required questions to continue.</span>
+      <button class="btn btn-primary" onclick="tryAdvance(16)">Finish &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 17: THANK YOU ========== -->
+  <div class="screen" id="screen-17">
+    <div class="thankyou-card">
+      <h1>Thank you for taking part</h1>
+      <p class="subtitle" style="text-align: center; margin-bottom: 16px;">
+        Your responses will help shape a clearer picture of the people and inclusion priorities across UK organisations in 2026.
+      </p>
+      <p class="subtitle" style="text-align: center; font-size: 0.9rem;">
+        If you opted in, we'll send you a summary of the findings within the next few weeks.
+      </p>
+      <p style="font-size: 0.85rem; color: var(--muted); margin-top: 20px;">
+        If you have any questions, please contact Inclusive Employers.
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-x" onclick="closeLightbox()">&times;</button>
+  <img id="lightbox-img" src="" alt="Enlarged image">
+</div>
+
+<script>
+// ===== CONFIG =====
+const SHEETS_URL = ''; // Replace with your deployed Apps Script URL
+const TOTAL_SCREENS = 18; // 0-17
+
+// ===== QUESTION DATA =====
+const Q_DATA = {
+  q1: {
+    type: 'radio', options: [
+      'HR (generalist / business partner)',
+      'Diversity, equity & inclusion / Inclusion specialist',
+      'Learning & development',
+      'People / organisational development, inc. culture',
+      'Talent and / or recruitment',
+      'Senior leadership (not in an HR or people function)',
+    ],
+    hasOther: true
+  },
+  q2: {
+    type: 'radio', options: [
+      'C-suite (CEO, CPO, CHRO, etc.)',
+      'Director or VP',
+      'Head of department',
+      'Manager',
+      'Specialist / Advisor',
+      'Other'
+    ]
+  },
+  q3: {
+    type: 'radio', options: [
+      'I am the final decision-maker',
+      'I am a key influencer in these decisions',
+      'I am involved but not a decision-maker',
+      'I am not involved in these decisions'
+    ]
+  },
+  q4: {
+    type: 'radio', options: [
+      'Fewer than 1,000',
+      '1,001–5,000',
+      '5,001–20,000',
+      '20,000+'
+    ]
+  },
+  q5: {
+    type: 'radio', options: [
+      'Public sector',
+      'Private sector',
+      'Third sector (charity / not-for-profit / social enterprise)',
+      'Other'
+    ]
+  },
+  q5a: {
+    type: 'radio', options: [
+      'Construction, Manufacturing and Engineering',
+      'Energy, Utilities & Environment',
+      'Financial Services, Banking and Insurance',
+      'Healthcare & Life Sciences',
+      'Media, Entertainment & Publishing',
+      'Professional Services',
+      'Public Sector & Not-for-Profit',
+      'Real Estate & Facilities',
+      'Retail & Hospitality',
+      'Sport',
+      'Technology, Software & SaaS',
+      'Transportation, Logistics & Aerospace',
+      'Other'
+    ]
+  },
+  q6: {
+    type: 'radio', options: [
+      'We are a current member of Inclusive Employers',
+      'We currently use Inclusive Employers\' services (but are not a member)',
+      'We were previously a member or service user (but not currently)',
+      'I\'ve heard of Inclusive Employers but we haven\'t worked with them',
+      'I\'m not aware of Inclusive Employers'
+    ]
+  },
+  q7: {
+    type: 'multi', randomise: true, options: [
+      'Training on inclusion topics for staff',
+      'Leadership and management development for inclusive behaviours',
+      'Supporting employee networks and inclusion events (e.g., National Inclusion Week)',
+      'Strategic consultancy on people and culture',
+      'Policy and procedure reviews',
+      'Inclusive recruitment and talent strategy',
+      'Accreditation and benchmarking of inclusion practices',
+      'Ongoing advisory support and partnership on inclusion',
+      'Pay gap reporting and action planning',
+      'Organisational culture and belonging strategy',
+      'Off-the-shelf compliance training (e.g., health & safety modules)',
+      'Defining or refreshing company values'
+    ]
+  },
+  q8: {
+    type: 'radio', options: [
+      'Strongly agree',
+      'Somewhat agree',
+      'Somewhat disagree',
+      'Strongly disagree'
+    ]
+  },
+  q9: {
+    type: 'radio', options: [
+      'Strongly agree',
+      'Somewhat agree',
+      'Somewhat disagree',
+      'Strongly disagree'
+    ]
+  },
+  q10: {
+    type: 'multi', max: 3, randomise: true, options: [
+      'Talent acquisition and recruitment',
+      'Talent retention',
+      'Developing leaders and line managers',
+      'Building an inclusive culture and sense of belonging',
+      'Employee engagement, wellbeing and performance',
+      'Fair pay, progression and reward',
+      'Managing organisational change and transformation',
+      'Demonstrating impact and value from people initiatives'
+    ]
+  },
+  q11: {
+    type: 'radio', options: [
+      'More important',
+      'About the same',
+      'Less important'
+    ]
+  },
+  q13: {
+    type: 'radio', options: [
+      'Increased',
+      'Stayed about the same',
+      'Decreased'
+    ]
+  },
+  q14: {
+    type: 'radio', options: [
+      'Increased',
+      'Stayed about the same',
+      'Decreased'
+    ]
+  },
+  q15_increased: {
+    type: 'radio', hasOther: true, options: [
+      'Growing strategic priority for inclusion / people agenda',
+      'Regulatory or compliance pressure',
+      'Stronger leadership commitment',
+      'Demonstrated ROI from previous investment',
+    ]
+  },
+  q15_decreased: {
+    type: 'radio', hasOther: true, options: [
+      'Broader organisational cost-cutting',
+      'Reduced priority for inclusion / people agenda',
+      'Difficulty proving impact or ROI',
+      'Political or reputational caution',
+    ]
+  },
+  q16: {
+    type: 'radio', options: [
+      'Significant pressure',
+      'Some pressure',
+      'Little or no pressure'
+    ]
+  },
+  q17: {
+    type: 'radio', options: [
+      'Very difficult — significant scrutiny or resistance',
+      'Somewhat difficult — requires strong justification',
+      'Not particularly difficult — generally supported'
+    ]
+  },
+  q18: {
+    type: 'multi', options: [
+      'DEI (Diversity, Equity & Inclusion)',
+      'EDI (Equity, Diversity & Inclusion)',
+      'Diversity & Inclusion (D&I)',
+      'Inclusion',
+      'Belonging',
+      'Culture',
+      'People strategy',
+      'Equity',
+      'We don\'t have a specific term for it',
+    ],
+    hasOther: true
+  },
+  q20: {
+    type: 'radio', options: [
+      'An ongoing membership or partnership with a specialist provider',
+      'Buying specific services as and when needed',
+      'A mix of both',
+      'We handle everything internally'
+    ]
+  },
+  q21: {
+    type: 'multi', max: 3, randomise: true, options: [
+      'Access to specialist expertise you don\'t have in-house',
+      'High-quality resources, toolkits and templates',
+      'Strategic partnership and ongoing advisory support',
+      'Benchmarking and diagnostics to measure progress',
+      'Community and peer learning with other organisations',
+      'Compliance and regulatory reassurance',
+      'Time-saving and efficiency for lean teams'
+    ]
+  },
+  q24: {
+    type: 'radio', options: ['Yes', 'No', 'Not sure']
+  },
+  q25: {
+    type: 'radio', options: ['Yes', 'No']
+  },
+  q26: {
+    type: 'radio', options: ['Yes', 'No']
+  }
+};
+
+// Matrix definitions
+const MATRICES = {
+  q19: {
+    scale: ['Agree', 'Neither agree nor disagree', 'Disagree'],
+    randomise: true,
+    items: [
+      { key: 'language_shifting', label: 'The language of workplace inclusion is shifting' },
+      { key: 'dei_reframing', label: 'DEI is increasingly being reframed as "belonging" or "culture"' },
+      { key: 'ticking_boxes', label: 'Until recently, much of the inclusion agenda felt overly focused on ticking boxes' },
+      { key: 'words_misunderstood', label: 'The words Diversity, Equity and Inclusion are misunderstood in my organisation' },
+      { key: 'diversity_negative', label: 'The word "Diversity" has negative connotations' },
+      { key: 'inclusion_positive', label: 'The word "Inclusion" is viewed positively by my organisation' }
+    ]
+  },
+  q22: {
+    scale: ['Strong', 'Moderate', 'Weak', 'Can\'t say'],
+    randomise: true,
+    items: [
+      { key: 'credible', label: 'Credible' },
+      { key: 'trusted', label: 'Trusted' },
+      { key: 'expert', label: 'Expert' },
+      { key: 'forward_thinking', label: 'Forward-thinking' },
+      { key: 'good_value', label: 'Good value' }
+    ]
+  },
+  q23: {
+    scale: ['Strongly agree', 'Somewhat agree', 'Somewhat disagree', 'Strongly disagree'],
+    randomise: true,
+    items: [
+      { key: 'modern', label: 'It looks modern and up-to-date' },
+      { key: 'professional', label: 'It looks professional and credible' },
+      { key: 'clear', label: 'It\'s clear what the organisation does' },
+      { key: 'engaging', label: 'It feels engaging and inviting' },
+      { key: 'work_with', label: 'It reflects an organisation I\'d want to work with' }
+    ]
+  }
+};
+
+// ===== STATE =====
+const answers = {};
+const sessionId = Date.now() + '-' + Math.random().toString(36).substr(2, 8);
+let currentScreen = 0;
+let startTime = null;
+let screenTimestamps = {};
+const matrixOrders = {}; // store randomised orders
+
+// ===== UTILITY =====
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// ===== BUILD OPTIONS =====
+function buildRadioOptions(qId, containerId) {
+  const q = Q_DATA[qId];
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  let opts = [...q.options];
+
+  let html = opts.map((opt, i) => `
+    <li><button class="option-btn" data-q="${qId}" data-val="${escHtml(opt)}" onclick="selectRadio('${qId}', this)">
+      <span class="radio-dot"></span>${escHtml(opt)}
+    </button></li>
+  `).join('');
+
+  if (q.hasOther) {
+    html += `
+      <li><button class="option-btn" data-q="${qId}" data-val="__other__" onclick="selectRadio('${qId}', this, true)">
+        <span class="radio-dot"></span>Other (please specify)
+      </button>
+      <input type="text" class="other-input" id="other-${qId}" placeholder="Please specify..." oninput="updateOtherRadio('${qId}')"></li>
+    `;
+  }
+  container.innerHTML = html;
+}
+
+function buildMultiOptions(qId, containerId) {
+  const q = Q_DATA[qId];
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  let opts = [...q.options];
+  if (q.randomise) opts = shuffle(opts);
+
+  let html = opts.map((opt, i) => `
+    <li><button class="check-btn" data-q="${qId}" data-val="${escHtml(opt)}" onclick="toggleMulti('${qId}', this, ${q.max || 0})">
+      <span class="check-box"></span>${escHtml(opt)}
+    </button></li>
+  `).join('');
+
+  if (q.hasOther) {
+    html += `
+      <li><button class="check-btn" data-q="${qId}" data-val="__other__" onclick="toggleMulti('${qId}', this, ${q.max || 0}, true)">
+        <span class="check-box"></span>Other (please specify)
+      </button>
+      <input type="text" class="other-input" id="other-${qId}" placeholder="Please specify..." oninput="updateOtherMulti('${qId}')"></li>
+    `;
+  }
+  container.innerHTML = html;
+}
+
+function buildMatrix(mId, desktopId, mobileId) {
+  const m = MATRICES[mId];
+  let items = [...m.items];
+  if (m.randomise) items = shuffle(items);
+  matrixOrders[mId] = items;
+
+  // Desktop table
+  let thead = '<tr><th>Statement</th>' + m.scale.map(s => `<th>${escHtml(s)}</th>`).join('') + '</tr>';
+  let tbody = items.map(item => {
+    let cells = m.scale.map((s, si) =>
+      `<td><input type="radio" class="matrix-radio" name="mx-${mId}-${item.key}" value="${escHtml(s)}" onclick="setMatrix('${mId}','${item.key}','${escHtml(s)}',this)"></td>`
+    ).join('');
+    return `<tr id="mrow-${mId}-${item.key}""><td>${escHtml(item.label)}</td>${cells}</tr>`;
+  }).join('');
+
+  const dEl = document.getElementById(desktopId);
+  if (dEl) dEl.innerHTML = `<table class="matrix-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table>`;
+
+  // Mobile cards
+  let mobile = items.map(item => {
+    let btns = m.scale.map(s =>
+      `<button class="mm-btn" onclick="setMatrix('${mId}','${item.key}','${escHtml(s)}',this)">${escHtml(s)}</button>`
+    ).join('');
+    return `<div class="matrix-mobile-item" id="mm-${mId}-${item.key}"><div class="mm-label">${escHtml(item.label)}</div><div class="mm-options">${btns}</div></div>`;
+  }).join('');
+
+  const mEl = document.getElementById(mobileId);
+  if (mEl) mEl.innerHTML = mobile;
+}
+
+// ===== HANDLERS =====
+function selectRadio(qId, btn, isOther) {
+  const card = btn.closest('.q-card');
+  card.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+
+  if (isOther) {
+    const otherInput = document.getElementById(`other-${qId}`);
+    otherInput.classList.add('show');
+    otherInput.focus();
+    answers[qId] = otherInput.value.trim() ? 'Other: ' + otherInput.value.trim() : '';
+  } else {
+    const otherInput = document.getElementById(`other-${qId}`);
+    if (otherInput) otherInput.classList.remove('show');
+    answers[qId] = btn.dataset.val;
+  }
+  card.classList.add('answered');
+  card.classList.remove('error-shake');
+
+  // Special routing triggers
+  if (qId === 'q11') handleQ11Change();
+  if (qId === 'q13') handleQ13Change();
+  if (qId === 'q25') handleQ25Change();
+}
+
+function updateOtherRadio(qId) {
+  const input = document.getElementById(`other-${qId}`);
+  if (input && input.value.trim()) {
+    answers[qId] = 'Other: ' + input.value.trim();
+  }
+}
+
+function toggleMulti(qId, btn, max, isOther) {
+  const q = Q_DATA[qId];
+  if (!answers[qId]) answers[qId] = [];
+
+  // "We don't have a specific term" is exclusive for Q18
+  const val = btn.dataset.val;
+  const isExclusive = (val === 'We don\'t have a specific term for it');
+
+  if (btn.classList.contains('selected')) {
+    btn.classList.remove('selected');
+    answers[qId] = answers[qId].filter(v => v !== (isOther ? '__other__' : val));
+    if (isOther) {
+      document.getElementById(`other-${qId}`).classList.remove('show');
+    }
+  } else {
+    // If exclusive option, deselect all others
+    if (isExclusive) {
+      btn.closest('.q-card').querySelectorAll('.check-btn').forEach(b => {
+        b.classList.remove('selected');
+      });
+      const otherInput = document.getElementById(`other-${qId}`);
+      if (otherInput) otherInput.classList.remove('show');
+      answers[qId] = [val];
+      btn.classList.add('selected');
+    } else {
+      // Deselect exclusive option if selecting non-exclusive
+      btn.closest('.q-card').querySelectorAll('.check-btn').forEach(b => {
+        if (b.dataset.val === 'We don\'t have a specific term for it') {
+          b.classList.remove('selected');
+          answers[qId] = answers[qId].filter(v => v !== 'We don\'t have a specific term for it');
+        }
+      });
+
+      if (max && answers[qId].length >= max) {
+        btn.closest('.q-card').classList.add('error-shake');
+        setTimeout(() => btn.closest('.q-card').classList.remove('error-shake'), 400);
+        return;
+      }
+      btn.classList.add('selected');
+      answers[qId].push(isOther ? '__other__' : val);
+      if (isOther) {
+        document.getElementById(`other-${qId}`).classList.add('show');
+        document.getElementById(`other-${qId}`).focus();
+      }
+    }
+  }
+
+  // Update count displays
+  if (qId === 'q10') document.getElementById('q10-count').textContent = answers.q10 ? answers.q10.length : 0;
+  if (qId === 'q21') document.getElementById('q21-count').textContent = answers.q21 ? answers.q21.length : 0;
+
+  const card = btn.closest('.q-card');
+  card.classList.toggle('answered', answers[qId] && answers[qId].length > 0);
+  card.classList.remove('error-shake');
+}
+
+function updateOtherMulti(qId) {
+  // Other value stored separately
+  const input = document.getElementById(`other-${qId}`);
+  if (input) answers[qId + '_other'] = input.value.trim();
+}
+
+function setMatrix(mId, itemKey, value, el) {
+  if (!answers[mId]) answers[mId] = {};
+  answers[mId][itemKey] = value;
+
+  // Update desktop radio
+  const radios = document.querySelectorAll(`input[name="mx-${mId}-${itemKey}"]`);
+  radios.forEach(r => { r.checked = (r.value === value); });
+
+  // Update mobile buttons
+  const mobileItem = document.getElementById(`mm-${mId}-${itemKey}`);
+  if (mobileItem) {
+    mobileItem.querySelectorAll('.mm-btn').forEach(b => {
+      b.classList.toggle('selected', b.textContent === value);
+    });
+  }
+
+  // Highlight row
+  const row = document.getElementById(`mrow-${mId}-${itemKey}`);
+  if (row) row.classList.add('answered-row');
+
+  // Check card answered state
+  const allAnswered = matrixOrders[mId] && matrixOrders[mId].every(item => answers[mId] && answers[mId][item.key]);
+  const card = document.getElementById(`qcard-${mId}`);
+  if (card) card.classList.toggle('answered', allAnswered);
+}
+
+// ===== ROUTING =====
+function handleQ11Change() {
+  const block = document.getElementById('q12-block');
+  if (answers.q11 === 'More important' || answers.q11 === 'Less important') {
+    block.classList.add('revealed');
+  } else {
+    block.classList.remove('revealed');
+    answers.q12 = undefined;
+  }
+}
+
+function handleQ13Change() {
+  // Q15 options depend on Q13 answer; rendered on screen 10 entry
+}
+
+function handleQ25Change() {
+  const block = document.getElementById('q25a-block');
+  if (answers.q25 === 'Yes') {
+    block.classList.add('revealed');
+  } else {
+    block.classList.remove('revealed');
+  }
+}
+
+function isIEAware() {
+  // Q6 options 1-4 = IE-aware; option 5 = not aware
+  const ieAwareOptions = [
+    'We are a current member of Inclusive Employers',
+    'We currently use Inclusive Employers\' services (but are not a member)',
+    'We were previously a member or service user (but not currently)',
+    'I\'ve heard of Inclusive Employers but we haven\'t worked with them'
+  ];
+  return ieAwareOptions.includes(answers.q6);
+}
+
+// ===== SCREEN MAP (for routing) =====
+// Standard flow: 0,1,2,3,4,5,6,7,8,9,10,11,12,13, [14,15], 16, 17
+function getNextScreen(fromScreen) {
+  if (fromScreen === 13) {
+    return isIEAware() ? 14 : 16;
+  }
+  if (fromScreen === 15) return 16;
+  return fromScreen + 1;
+}
+
+function getPrevScreen(fromScreen) {
+  if (fromScreen === 16) {
+    return isIEAware() ? 15 : 13;
+  }
+  return fromScreen - 1;
+}
+
+// ===== PREPARE SCREEN 10 (Q15 routing) =====
+function prepareScreen10() {
+  const q15Block = document.getElementById('q15-block');
+  const q15Container = document.getElementById('opts-q15');
+
+  if (answers.q13 === 'Increased') {
+    q15Block.style.display = 'block';
+    document.getElementById('q15-label').textContent = 'What is the main reason for the budget increase?';
+    buildRadioOptions('q15_increased', 'opts-q15');
+  } else if (answers.q13 === 'Decreased') {
+    q15Block.style.display = 'block';
+    document.getElementById('q15-label').textContent = 'What is the main reason for the budget decrease?';
+    buildRadioOptions('q15_decreased', 'opts-q15');
+  } else {
+    q15Block.style.display = 'none';
+  }
+}
+
+// ===== VALIDATION =====
+function validateScreen(idx) {
+  switch(idx) {
+    case 1: return answers.q1 && answers.q2;
+    case 2: return answers.q3 && answers.q4 && answers.q5;
+    case 3: return !!answers.q5a;
+    case 4: return !!answers.q6;
+    case 5: return answers.q7 && answers.q7.length > 0;
+    case 6: return answers.q8 && answers.q9;
+    case 7: return answers.q10 && answers.q10.length > 0;
+    case 8: {
+      if (!answers.q11) return false;
+      if ((answers.q11 === 'More important' || answers.q11 === 'Less important')) {
+        const txt = document.getElementById('q12-text').value.trim();
+        if (!txt) return false;
+        answers.q12 = txt;
+      }
+      return true;
+    }
+    case 9: return answers.q13 && answers.q14;
+    case 10: {
+      if (!answers.q16 || !answers.q17) return false;
+      if (answers.q13 === 'Increased' && !answers.q15_increased) return false;
+      if (answers.q13 === 'Decreased' && !answers.q15_decreased) return false;
+      return true;
+    }
+    case 11: return answers.q18 && answers.q18.length > 0;
+    case 12: {
+      if (!answers.q19) return false;
+      return matrixOrders.q19 && matrixOrders.q19.every(item => answers.q19[item.key]);
+    }
+    case 13: {
+      if (!answers.q20) return false;
+      return answers.q21 && answers.q21.length > 0;
+    }
+    case 14: {
+      if (!answers.q24) return false;
+      if (!answers.q22) return false;
+      return matrixOrders.q22 && matrixOrders.q22.every(item => answers.q22[item.key]);
+    }
+    case 15: {
+      if (!answers.q23) return false;
+      return matrixOrders.q23 && matrixOrders.q23.every(item => answers.q23[item.key]);
+    }
+    case 16: {
+      if (!answers.q25 || !answers.q26) return false;
+      if (answers.q25 === 'Yes') {
+        const email = document.getElementById('q25a-email').value.trim();
+        if (!email || !email.includes('@')) return false;
+        answers.q25a_email = email;
+      }
+      return true;
+    }
+    default: return true;
+  }
+}
+
+function tryAdvance(fromScreen) {
+  const valMsg = document.getElementById(`val-${fromScreen}`);
+
+  if (!validateScreen(fromScreen)) {
+    if (valMsg) valMsg.classList.add('show');
+    // Shake unanswered cards
+    const screenEl = document.getElementById(`screen-${fromScreen}`);
+    screenEl.querySelectorAll('.q-card:not(.answered)').forEach(card => {
+      card.classList.add('error-shake');
+      setTimeout(() => card.classList.remove('error-shake'), 400);
+    });
+    return;
+  }
+
+  if (valMsg) valMsg.classList.remove('show');
+
+  // Submit data
+  submitData();
+
+  const next = getNextScreen(fromScreen);
+
+  // Prepare screen 10 routing
+  if (next === 10) prepareScreen10();
+
+  goToScreen(next);
+}
+
+// ===== NAVIGATION =====
+function goToScreen(idx) {
+  if (idx === 1 && !startTime) startTime = Date.now();
+
+  screenTimestamps[`screen_${idx}_enter`] = Date.now();
+
+  const cur = document.getElementById(`screen-${currentScreen}`);
+  cur.classList.remove('visible');
+  setTimeout(() => {
+    cur.classList.remove('active');
+    currentScreen = idx;
+    const nxt = document.getElementById(`screen-${idx}`);
+    nxt.classList.add('active');
+    void nxt.offsetWidth;
+    nxt.classList.add('visible');
+
+    // Progress
+    let progress = 0;
+    if (idx === 0) progress = 0;
+    else if (idx === 17) progress = 100;
+    else {
+      // Calculate based on position in flow
+      const totalContent = isIEAware() ? 16 : 14;
+      progress = Math.min(Math.round((idx / totalContent) * 100), 99);
+    }
+    document.getElementById('progressBar').style.width = progress + '%';
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 180);
+}
+
+// Wire up dynamic back buttons
+document.getElementById('back-to-pre-optin').addEventListener('click', function() {
+  goToScreen(getPrevScreen(16));
+});
+
+// ===== DATA SUBMISSION =====
+function buildPayload() {
+  // Resolve multi-select "other" values
+  const resolveMulti = (qId) => {
+    if (!answers[qId]) return [];
+    return answers[qId].map(v => {
+      if (v === '__other__') {
+        const otherVal = answers[qId + '_other'] || '';
+        return otherVal ? 'Other: ' + otherVal : 'Other';
+      }
+      return v;
+    });
+  };
+
+  return {
+    sessionId: sessionId,
+    startTime: startTime,
+    endTime: currentScreen >= 16 ? Date.now() : null,
+    totalSeconds: startTime ? Math.round((Date.now() - startTime) / 1000) : null,
+    currentScreen: currentScreen,
+
+    // S1
+    q1_role: answers.q1 || '',
+    q2_seniority: answers.q2 || '',
+    q3_decision: answers.q3 || '',
+    q4_orgsize: answers.q4 || '',
+    q5_sector: answers.q5 || '',
+    q5a_subsector: answers.q5a || '',
+
+    // S2
+    q6_ie_relationship: answers.q6 || '',
+
+    // S3
+    q7_services: resolveMulti('q7').join(' | '),
+    q8_strategic_stretch: answers.q8 || '',
+    q9_name_limitation: answers.q9 || '',
+
+    // S4
+    q10_priorities: (answers.q10 || []).join(' | '),
+    q11_inclusion_trend: answers.q11 || '',
+    q12_trend_reason: answers.q12 || '',
+
+    // S5
+    q13_budget: answers.q13 || '',
+    q14_headcount: answers.q14 || '',
+    q15_budget_reason: answers.q15_increased || answers.q15_decreased || '',
+    q16_roi_pressure: answers.q16 || '',
+    q17_approval_difficulty: answers.q17 || '',
+
+    // S6
+    q18_terms: resolveMulti('q18').join(' | '),
+    q19_language_shifting: answers.q19 ? answers.q19.language_shifting || '' : '',
+    q19_dei_reframing: answers.q19 ? answers.q19.dei_reframing || '' : '',
+    q19_ticking_boxes: answers.q19 ? answers.q19.ticking_boxes || '' : '',
+    q19_words_misunderstood: answers.q19 ? answers.q19.words_misunderstood || '' : '',
+    q19_diversity_negative: answers.q19 ? answers.q19.diversity_negative || '' : '',
+    q19_inclusion_positive: answers.q19 ? answers.q19.inclusion_positive || '' : '',
+
+    // S7
+    q20_relationship_pref: answers.q20 || '',
+    q21_membership_values: (answers.q21 || []).join(' | '),
+
+    // S8 (routed)
+    q22_credible: answers.q22 ? answers.q22.credible || '' : '',
+    q22_trusted: answers.q22 ? answers.q22.trusted || '' : '',
+    q22_expert: answers.q22 ? answers.q22.expert || '' : '',
+    q22_forward_thinking: answers.q22 ? answers.q22.forward_thinking || '' : '',
+    q22_good_value: answers.q22 ? answers.q22.good_value || '' : '',
+    q23_modern: answers.q23 ? answers.q23.modern || '' : '',
+    q23_professional: answers.q23 ? answers.q23.professional || '' : '',
+    q23_clear: answers.q23 ? answers.q23.clear || '' : '',
+    q23_engaging: answers.q23 ? answers.q23.engaging || '' : '',
+    q23_work_with: answers.q23 ? answers.q23.work_with || '' : '',
+    q23a_visual_thoughts: document.getElementById('q23a-text') ? document.getElementById('q23a-text').value.trim() : '',
+    q24_confusion: answers.q24 || '',
+
+    // S9
+    q25_report_optin: answers.q25 || '',
+    q25a_email: answers.q25a_email || '',
+    q26_discussion_optin: answers.q26 || '',
+  };
+}
+
+function submitData() {
+  const payload = buildPayload();
+  console.log('=== SUBMITTING DATA ===', JSON.stringify(payload, null, 2));
+
+  if (SHEETS_URL) {
+    fetch(SHEETS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify(payload)
+    }).then(() => {
+      console.log('Data submitted to Google Sheets');
+    }).catch(err => {
+      console.warn('Sheets submission failed:', err);
+    });
+  }
+}
+
+// ===== LIGHTBOX =====
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+// ===== INIT =====
+function init() {
+  // Build all radio/multi option lists
+  buildRadioOptions('q1', 'opts-q1');
+  buildRadioOptions('q2', 'opts-q2');
+  buildRadioOptions('q3', 'opts-q3');
+  buildRadioOptions('q4', 'opts-q4');
+  buildRadioOptions('q5', 'opts-q5');
+  buildRadioOptions('q5a', 'opts-q5a');
+  buildRadioOptions('q6', 'opts-q6');
+  buildMultiOptions('q7', 'opts-q7');
+  buildRadioOptions('q8', 'opts-q8');
+  buildRadioOptions('q9', 'opts-q9');
+  buildMultiOptions('q10', 'opts-q10');
+  buildRadioOptions('q11', 'opts-q11');
+  buildRadioOptions('q13', 'opts-q13');
+  buildRadioOptions('q14', 'opts-q14');
+  buildRadioOptions('q16', 'opts-q16');
+  buildRadioOptions('q17', 'opts-q17');
+  buildMultiOptions('q18', 'opts-q18');
+  buildRadioOptions('q20', 'opts-q20');
+  buildMultiOptions('q21', 'opts-q21');
+  buildRadioOptions('q24', 'opts-q24');
+  buildRadioOptions('q25', 'opts-q25');
+  buildRadioOptions('q26', 'opts-q26');
+
+  // Build matrices
+  buildMatrix('q19', 'matrix-q19-desktop', 'matrix-q19-mobile');
+  buildMatrix('q22', 'matrix-q22-desktop', 'matrix-q22-mobile');
+  buildMatrix('q23', 'matrix-q23-desktop', 'matrix-q23-mobile');
+
+  // Show welcome screen
+  setTimeout(() => document.getElementById('screen-0').classList.add('visible'), 50);
+  console.log('Survey initialized | Session:', sessionId);
+}
+
+init();
+</script>
+</body>
+</html>
