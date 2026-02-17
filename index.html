@@ -127,12 +127,13 @@ h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--accen
   font-size: 0.85rem; color: var(--muted); margin-bottom: 14px; line-height: 1.5;
 }
 .q-description {
-  font-size: 0.88rem; color: var(--muted); font-style: italic;
-  margin-bottom: 14px; line-height: 1.5;
-  padding: 10px 14px;
-  background: #f8f9fb;
-  border-left: 3px solid var(--accent-light);
+  font-size: 0.95rem; color: var(--text); font-style: italic;
+  margin-bottom: 14px; line-height: 1.6;
+  padding: 14px 18px;
+  background: var(--accent-light);
+  border-left: 4px solid var(--accent);
   border-radius: 0 6px 6px 0;
+  font-weight: 500;
 }
 
 /* Radio options */
@@ -207,11 +208,11 @@ h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--accen
 .matrix-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .matrix-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
 .matrix-table th {
-  padding: 10px 8px; font-weight: 700; text-align: center;
-  color: var(--accent); font-size: 0.8rem; border-bottom: 2px solid var(--border);
-  white-space: nowrap;
+  padding: 10px 6px; font-weight: 700; text-align: center;
+  color: var(--accent); font-size: 0.78rem; border-bottom: 2px solid var(--border);
+  white-space: normal; word-wrap: break-word; min-width: 70px;
 }
-.matrix-table th:first-child { text-align: left; min-width: 200px; }
+.matrix-table th:first-child { text-align: left; min-width: 180px; white-space: normal; }
 .matrix-table td { padding: 10px 8px; text-align: center; border-bottom: 1px solid #eee; }
 .matrix-table td:first-child {
   text-align: left; font-weight: 600; font-size: 0.88rem; line-height: 1.4;
@@ -235,8 +236,8 @@ h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--accen
 }
 .matrix-mobile-item .mm-options { display: flex; gap: 6px; flex-wrap: wrap; }
 .mm-btn {
-  flex: 1; min-width: 0;
-  padding: 8px 6px; font-size: 0.76rem; font-weight: 600;
+  flex: 1 1 auto; min-width: 0;
+  padding: 9px 8px; font-size: 0.78rem; font-weight: 600;
   font-family: var(--font); border: 2px solid var(--border);
   border-radius: 6px; background: var(--surface); color: var(--text);
   cursor: pointer; transition: all 0.15s ease; text-align: center; line-height: 1.3;
@@ -276,11 +277,12 @@ h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--accen
 
 /* Section transitions */
 .section-intro {
-  font-size: 0.88rem; color: var(--muted); font-style: italic;
-  margin-bottom: 20px; padding: 12px 16px;
+  font-size: 0.95rem; color: #2a2a3a; font-style: italic;
+  margin-bottom: 20px; padding: 14px 18px;
   background: var(--highlight-light);
-  border-left: 3px solid var(--highlight);
-  border-radius: 0 6px 6px 0; line-height: 1.55;
+  border-left: 4px solid var(--highlight);
+  border-radius: 0 6px 6px 0; line-height: 1.6;
+  font-weight: 500;
 }
 
 /* Conditional reveal */
@@ -352,11 +354,14 @@ h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--accen
   h1 { font-size: 1.3rem; }
   .q-card { padding: 18px 16px; }
   .option-btn { padding: 10px 14px; font-size: 0.88rem; }
-  .matrix-desktop { display: none; }
-  .matrix-mobile { display: block; }
   .nav-row { flex-wrap: wrap; }
 }
-@media (min-width: 641px) {
+/* Matrix: switch to mobile stacked at 768px for better readability */
+@media (max-width: 768px) {
+  .matrix-desktop { display: none; }
+  .matrix-mobile { display: block; }
+}
+@media (min-width: 769px) {
   .matrix-mobile { display: none; }
 }
 </style>
@@ -1170,25 +1175,36 @@ function selectRadio(qId, btn, isOther) {
     const otherInput = document.getElementById(`other-${qId}`);
     otherInput.classList.add('show');
     otherInput.focus();
-    answers[qId] = otherInput.value.trim() ? 'Other: ' + otherInput.value.trim() : '';
+    const val = otherInput.value.trim();
+    answers[qId] = val ? 'Other: ' + val : '__other_pending__';
+    card.classList.toggle('answered', !!val);
   } else {
     const otherInput = document.getElementById(`other-${qId}`);
-    if (otherInput) otherInput.classList.remove('show');
+    if (otherInput) { otherInput.classList.remove('show'); otherInput.value = ''; }
     answers[qId] = btn.dataset.val;
+    card.classList.add('answered');
   }
-  card.classList.add('answered');
   card.classList.remove('error-shake');
 
   // Special routing triggers
   if (qId === 'q11') handleQ11Change();
   if (qId === 'q13') handleQ13Change();
   if (qId === 'q25') handleQ25Change();
+  if (qId === 'q26') handleQ26Change();
 }
 
 function updateOtherRadio(qId) {
   const input = document.getElementById(`other-${qId}`);
-  if (input && input.value.trim()) {
-    answers[qId] = 'Other: ' + input.value.trim();
+  const card = input ? input.closest('.q-card') : null;
+  if (input) {
+    const val = input.value.trim();
+    if (val) {
+      answers[qId] = 'Other: ' + val;
+      if (card) card.classList.add('answered');
+    } else {
+      answers[qId] = '__other_pending__';
+      if (card) card.classList.remove('answered');
+    }
   }
 }
 
@@ -1249,9 +1265,16 @@ function toggleMulti(qId, btn, max, isOther) {
 }
 
 function updateOtherMulti(qId) {
-  // Other value stored separately
   const input = document.getElementById(`other-${qId}`);
-  if (input) answers[qId + '_other'] = input.value.trim();
+  if (input) {
+    answers[qId + '_other'] = input.value.trim();
+    // Update card answered state — only fully answered if Other text is filled
+    const card = input.closest('.q-card');
+    if (card && answers[qId] && answers[qId].length > 0) {
+      const hasEmptyOther = answers[qId].includes('__other__') && !input.value.trim();
+      card.classList.toggle('answered', !hasEmptyOther);
+    }
+  }
 }
 
 function setMatrix(mId, itemKey, value, el) {
@@ -1295,13 +1318,33 @@ function handleQ13Change() {
   // Q15 options depend on Q13 answer; rendered on screen 10 entry
 }
 
-function handleQ25Change() {
+function handleEmailReveal() {
   const block = document.getElementById('q25a-block');
-  if (answers.q25 === 'Yes') {
+  const needsEmail = (answers.q25 === 'Yes' || answers.q26 === 'Yes');
+  if (needsEmail) {
+    // Update hint text based on why we need email
+    const hintEl = document.querySelector('#qcard-q25a .q-hint');
+    if (hintEl) {
+      if (answers.q25 === 'Yes' && answers.q26 === 'Yes') {
+        hintEl.textContent = 'Your email will be used to send you the report and discussion invitation. It will not be linked to your survey responses.';
+      } else if (answers.q26 === 'Yes') {
+        hintEl.textContent = 'Your email will be used to contact you about the discussion session. It will not be linked to your survey responses.';
+      } else {
+        hintEl.textContent = 'Your email will only be used to send you the report and will not be linked to your survey responses.';
+      }
+    }
     block.classList.add('revealed');
   } else {
     block.classList.remove('revealed');
   }
+}
+
+function handleQ25Change() {
+  handleEmailReveal();
+}
+
+function handleQ26Change() {
+  handleEmailReveal();
 }
 
 function isIEAware() {
@@ -1351,17 +1394,32 @@ function prepareScreen10() {
 }
 
 // ===== VALIDATION =====
+// Helper: check a radio answer is valid (not empty, not pending)
+function isValidRadio(val) {
+  return val && val !== '__other_pending__';
+}
+
+// Helper: check multi-select "Other" text is filled in
+function isValidMulti(qId) {
+  if (!answers[qId] || answers[qId].length === 0) return false;
+  if (answers[qId].includes('__other__')) {
+    const otherVal = answers[qId + '_other'] || '';
+    if (!otherVal) return false;
+  }
+  return true;
+}
+
 function validateScreen(idx) {
   switch(idx) {
-    case 1: return answers.q1 && answers.q2;
-    case 2: return answers.q3 && answers.q4 && answers.q5;
-    case 3: return !!answers.q5a;
-    case 4: return !!answers.q6;
-    case 5: return answers.q7 && answers.q7.length > 0;
-    case 6: return answers.q8 && answers.q9;
+    case 1: return isValidRadio(answers.q1) && isValidRadio(answers.q2);
+    case 2: return isValidRadio(answers.q3) && isValidRadio(answers.q4) && isValidRadio(answers.q5);
+    case 3: return isValidRadio(answers.q5a);
+    case 4: return isValidRadio(answers.q6);
+    case 5: return isValidMulti('q7');
+    case 6: return isValidRadio(answers.q8) && isValidRadio(answers.q9);
     case 7: return answers.q10 && answers.q10.length > 0;
     case 8: {
-      if (!answers.q11) return false;
+      if (!isValidRadio(answers.q11)) return false;
       if ((answers.q11 === 'More important' || answers.q11 === 'Less important')) {
         const txt = document.getElementById('q12-text').value.trim();
         if (!txt) return false;
@@ -1369,24 +1427,24 @@ function validateScreen(idx) {
       }
       return true;
     }
-    case 9: return answers.q13 && answers.q14;
+    case 9: return isValidRadio(answers.q13) && isValidRadio(answers.q14);
     case 10: {
-      if (!answers.q16 || !answers.q17) return false;
-      if (answers.q13 === 'Increased' && !answers.q15_increased) return false;
-      if (answers.q13 === 'Decreased' && !answers.q15_decreased) return false;
+      if (!isValidRadio(answers.q16) || !isValidRadio(answers.q17)) return false;
+      if (answers.q13 === 'Increased' && !isValidRadio(answers.q15_increased)) return false;
+      if (answers.q13 === 'Decreased' && !isValidRadio(answers.q15_decreased)) return false;
       return true;
     }
-    case 11: return answers.q18 && answers.q18.length > 0;
+    case 11: return isValidMulti('q18');
     case 12: {
       if (!answers.q19) return false;
       return matrixOrders.q19 && matrixOrders.q19.every(item => answers.q19[item.key]);
     }
     case 13: {
-      if (!answers.q20) return false;
+      if (!isValidRadio(answers.q20)) return false;
       return answers.q21 && answers.q21.length > 0;
     }
     case 14: {
-      if (!answers.q24) return false;
+      if (!isValidRadio(answers.q24)) return false;
       if (!answers.q22) return false;
       return matrixOrders.q22 && matrixOrders.q22.every(item => answers.q22[item.key]);
     }
@@ -1395,8 +1453,9 @@ function validateScreen(idx) {
       return matrixOrders.q23 && matrixOrders.q23.every(item => answers.q23[item.key]);
     }
     case 16: {
-      if (!answers.q25 || !answers.q26) return false;
-      if (answers.q25 === 'Yes') {
+      if (!isValidRadio(answers.q25) || !isValidRadio(answers.q26)) return false;
+      const needsEmail = (answers.q25 === 'Yes' || answers.q26 === 'Yes');
+      if (needsEmail) {
         const email = document.getElementById('q25a-email').value.trim();
         if (!email || !email.includes('@')) return false;
         answers.q25a_email = email;
@@ -1472,6 +1531,9 @@ document.getElementById('back-to-pre-optin').addEventListener('click', function(
 
 // ===== DATA SUBMISSION =====
 function buildPayload() {
+  // Clean pending other values
+  const cleanRadio = (val) => (val && val !== '__other_pending__') ? val : '';
+
   // Resolve multi-select "other" values
   const resolveMulti = (qId) => {
     if (!answers[qId]) return [];
@@ -1492,32 +1554,32 @@ function buildPayload() {
     currentScreen: currentScreen,
 
     // S1
-    q1_role: answers.q1 || '',
-    q2_seniority: answers.q2 || '',
-    q3_decision: answers.q3 || '',
-    q4_orgsize: answers.q4 || '',
-    q5_sector: answers.q5 || '',
-    q5a_subsector: answers.q5a || '',
+    q1_role: cleanRadio(answers.q1),
+    q2_seniority: cleanRadio(answers.q2),
+    q3_decision: cleanRadio(answers.q3),
+    q4_orgsize: cleanRadio(answers.q4),
+    q5_sector: cleanRadio(answers.q5),
+    q5a_subsector: cleanRadio(answers.q5a),
 
     // S2
-    q6_ie_relationship: answers.q6 || '',
+    q6_ie_relationship: cleanRadio(answers.q6),
 
     // S3
     q7_services: resolveMulti('q7').join(' | '),
-    q8_strategic_stretch: answers.q8 || '',
-    q9_name_limitation: answers.q9 || '',
+    q8_strategic_stretch: cleanRadio(answers.q8),
+    q9_name_limitation: cleanRadio(answers.q9),
 
     // S4
     q10_priorities: (answers.q10 || []).join(' | '),
-    q11_inclusion_trend: answers.q11 || '',
+    q11_inclusion_trend: cleanRadio(answers.q11),
     q12_trend_reason: answers.q12 || '',
 
     // S5
-    q13_budget: answers.q13 || '',
-    q14_headcount: answers.q14 || '',
-    q15_budget_reason: answers.q15_increased || answers.q15_decreased || '',
-    q16_roi_pressure: answers.q16 || '',
-    q17_approval_difficulty: answers.q17 || '',
+    q13_budget: cleanRadio(answers.q13),
+    q14_headcount: cleanRadio(answers.q14),
+    q15_budget_reason: cleanRadio(answers.q15_increased) || cleanRadio(answers.q15_decreased),
+    q16_roi_pressure: cleanRadio(answers.q16),
+    q17_approval_difficulty: cleanRadio(answers.q17),
 
     // S6
     q18_terms: resolveMulti('q18').join(' | '),
@@ -1529,7 +1591,7 @@ function buildPayload() {
     q19_inclusion_positive: answers.q19 ? answers.q19.inclusion_positive || '' : '',
 
     // S7
-    q20_relationship_pref: answers.q20 || '',
+    q20_relationship_pref: cleanRadio(answers.q20),
     q21_membership_values: (answers.q21 || []).join(' | '),
 
     // S8 (routed)
@@ -1544,12 +1606,12 @@ function buildPayload() {
     q23_engaging: answers.q23 ? answers.q23.engaging || '' : '',
     q23_work_with: answers.q23 ? answers.q23.work_with || '' : '',
     q23a_visual_thoughts: document.getElementById('q23a-text') ? document.getElementById('q23a-text').value.trim() : '',
-    q24_confusion: answers.q24 || '',
+    q24_confusion: cleanRadio(answers.q24),
 
     // S9
-    q25_report_optin: answers.q25 || '',
+    q25_report_optin: cleanRadio(answers.q25),
     q25a_email: answers.q25a_email || '',
-    q26_discussion_optin: answers.q26 || '',
+    q26_discussion_optin: cleanRadio(answers.q26),
   };
 }
 
