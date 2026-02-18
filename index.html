@@ -1683,7 +1683,7 @@ function buildPayload() {
 
     // S9
     q25_report_optin: cleanRadio(answers.q25),
-    q25a_email: answers.q25a_email || '',
+    q25a_email: document.getElementById('q25a-email') ? document.getElementById('q25a-email').value.trim() : '',
     q26_discussion_optin: cleanRadio(answers.q26),
   };
 }
