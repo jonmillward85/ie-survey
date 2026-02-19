@@ -638,13 +638,13 @@ h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--accen
 
     <!-- Q13 -->
     <div class="q-card" id="qcard-q13">
-      <div class="q-label">Over the past 12 months, has your organisation's discretionary budget for external inclusion and people development support...</div>
+      <div class="q-label">Over the past 12 months, has your organisation's discretionary budget for external inclusion support...</div>
       <ul class="option-list" id="opts-q13"></ul>
     </div>
 
     <!-- Q14 -->
     <div class="q-card" id="qcard-q14">
-      <div class="q-label">Over the same period, has your organisation's internal headcount dedicated to inclusion and people development...</div>
+      <div class="q-label">Over the same period, has your organisation's internal headcount dedicated to inclusion...</div>
       <ul class="option-list" id="opts-q14"></ul>
     </div>
 
@@ -834,7 +834,7 @@ h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--accen
 
     <!-- Q26 -->
     <div class="q-card" id="qcard-q26">
-      <div class="q-label">We may host a short discussion session to explore these themes further. Would you be interested in taking part?</div>
+      <div class="q-label">We may host a webinar to explore these themes further. Would you be interested in an invitation to join?</div>
       <ul class="option-list" id="opts-q26"></ul>
     </div>
 
@@ -1396,9 +1396,9 @@ function handleEmailReveal() {
     const hintEl = document.querySelector('#qcard-q25a .q-hint');
     if (hintEl) {
       if (answers.q25 === 'Yes' && answers.q26 === 'Yes') {
-        hintEl.textContent = 'Your email will be used to send you the report and discussion invitation. It will not be linked to your survey responses.';
+        hintEl.textContent = 'Your email will be used to send you the report and a webinar invitation. It will not be linked to your survey responses.';
       } else if (answers.q26 === 'Yes') {
-        hintEl.textContent = 'Your email will be used to contact you about the discussion session. It will not be linked to your survey responses.';
+        hintEl.textContent = 'Your email will only be used to send you a webinar invitation and will not be linked to your survey responses.';
       } else {
         hintEl.textContent = 'Your email will only be used to send you the report and will not be linked to your survey responses.';
       }
@@ -1684,7 +1684,7 @@ function buildPayload() {
     // S9
     q25_report_optin: cleanRadio(answers.q25),
     q25a_email: document.getElementById('q25a-email') ? document.getElementById('q25a-email').value.trim() : '',
-    q26_discussion_optin: cleanRadio(answers.q26),
+    q26_webinar_optin: cleanRadio(answers.q26),
   };
 }
 

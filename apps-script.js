@@ -115,7 +115,7 @@ function getHeaders() {
     // S9: Opt-ins
     'q25_report_optin',
     'q25a_email',
-    'q26_discussion_optin',
+    'q26_webinar_optin',
 
     'timestamp'
   ];
